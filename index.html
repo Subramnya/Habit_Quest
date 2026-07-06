@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit Quest</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero-panel" aria-labelledby="app-title">
+        <div>
+          <p class="eyebrow">Daily streak tracker</p>
+          <h1 id="app-title">Habit Quest</h1>
+          <p class="hero-copy">
+            Track Food, DSA, Sleep, New Skill, Exercise, and Gratitude with
+            streaks, skipped days, and simple progress charts.
+          </p>
+        </div>
+        <div class="hero-stat" aria-label="Today's completion score">
+          <span id="todayScore">0%</span>
+          <small>today</small>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="Habit controls">
+        <form id="habitForm" class="habit-form">
+          <label for="habitName">Add habit</label>
+          <input id="habitName" name="habitName" type="text" autocomplete="off" placeholder="Habit name" />
+          <button type="submit">Add</button>
+        </form>
+        <div class="date-tools">
+          <button id="previousDay" type="button" aria-label="Previous day">&lt;</button>
+          <input id="logDate" type="date" />
+          <button id="nextDay" type="button" aria-label="Next day">&gt;</button>
+        </div>
+      </section>
+
+      <section class="dashboard-grid">
+        <div class="panel habit-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Check-in</p>
+              <h2>Today's Habits</h2>
+            </div>
+            <button id="resetToday" type="button" class="quiet-button">Clear day</button>
+          </div>
+          <div id="habitList" class="habit-list" aria-live="polite"></div>
+          <div class="todo-panel" aria-labelledby="todo-title">
+            <div class="section-heading todo-heading">
+              <div>
+                <p class="eyebrow">Daily tasks</p>
+                <h2 id="todo-title">Today's To-Do List</h2>
+              </div>
+              <span id="todoProgress" class="todo-progress">0/0 done</span>
+            </div>
+            <form id="todoForm" class="todo-form">
+              <input id="todoText" name="todoText" type="text" autocomplete="off" placeholder="Add a task for this day" />
+              <button type="submit">Add task</button>
+            </form>
+            <div id="todoList" class="todo-list" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <aside class="panel summary-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Quest log</p>
+              <h2>Progress</h2>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div>
+              <span id="totalStreaks">0</span>
+              <small>active streak days</small>
+            </div>
+            <div>
+              <span id="bestStreak">0</span>
+              <small>best streak</small>
+            </div>
+            <div>
+              <span id="totalDone">0</span>
+              <small>completed logs</small>
+            </div>
+            <div>
+              <span id="skipCount">0</span>
+              <small>intentional skips</small>
+            </div>
+          </div>
+          <div class="chart-block">
+            <div class="chart-title">
+              <span>7-day completion</span>
+              <strong id="weeklyRate">0%</strong>
+            </div>
+            <div id="weekChart" class="bar-chart" aria-label="Seven day completion chart"></div>
+          </div>
+          <div class="chart-block">
+            <div class="chart-title">
+              <span>Habit streaks</span>
+            </div>
+            <div id="streakChart" class="streak-chart" aria-label="Habit streak chart"></div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel month-panel" aria-labelledby="month-title">
+        <div class="section-heading month-heading">
+          <div>
+            <p class="eyebrow">Complete month</p>
+            <h2 id="month-title">Monthly Quest Board</h2>
+          </div>
+          <div class="month-tools">
+            <button id="previousMonth" type="button" aria-label="Previous month">&lt;</button>
+            <strong id="monthLabel"></strong>
+            <button id="nextMonth" type="button" aria-label="Next month">&gt;</button>
+          </div>
+        </div>
+        <div class="month-stats" aria-label="Monthly progress summary">
+          <div>
+            <span id="monthRate">0%</span>
+            <small>monthly completion</small>
+          </div>
+          <div>
+            <span id="monthDone">0</span>
+            <small>completed logs</small>
+          </div>
+          <div>
+            <span id="monthPerfectDays">0</span>
+            <small>perfect days</small>
+          </div>
+          <div>
+            <span id="monthSkipped">0</span>
+            <small>skipped logs</small>
+          </div>
+        </div>
+        <div class="month-layout">
+          <div>
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>Sun</span>
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+            </div>
+            <div id="monthCalendar" class="month-calendar" aria-label="Monthly calendar"></div>
+          </div>
+          <div>
+            <div class="chart-title">
+              <span>Habit totals this month</span>
+            </div>
+            <div id="monthHabitBreakdown" class="month-habit-breakdown"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel save-panel">
+        <div>
+          <p class="eyebrow">Saved locally</p>
+          <h2>Backup and Restore</h2>
+          <p>
+            Your tracker is saved in this browser. Export a backup if you want
+            to move it or restore it later.
+          </p>
+        </div>
+        <div class="save-actions">
+          <button id="exportData" type="button">Export</button>
+          <label class="import-button" for="importData">Import</label>
+          <input id="importData" type="file" accept="application/json" />
+        </div>
+      </section>
+    </main>
+
+    <template id="habitTemplate">
+      <article class="habit-card">
+        <div class="habit-main">
+          <input class="habit-title-input" type="text" aria-label="Habit name" />
+          <div class="habit-meta">
+            <span class="streak-pill"></span>
+            <span class="status-pill"></span>
+          </div>
+        </div>
+        <div class="habit-actions" aria-label="Habit status">
+          <button type="button" data-status="done">Done</button>
+          <button type="button" data-status="partial">Partial</button>
+          <button type="button" data-status="skipped">Skipped</button>
+          <button type="button" data-status="missed">Missed</button>
+        </div>
+        <button class="delete-habit" type="button" aria-label="Delete habit">Remove</button>
+      </article>
+    </template>
+
+    <template id="todoTemplate">
+      <article class="todo-item">
+        <label>
+          <input class="todo-checkbox" type="checkbox" />
+          <span class="todo-checkmark" aria-hidden="true"></span>
+        </label>
+        <input class="todo-text-input" type="text" aria-label="To-do text" />
+        <button class="delete-todo" type="button" aria-label="Delete to-do">Remove</button>
+      </article>
+    </template>
+
+    <script>
+      const STORAGE_KEY = "habit-quest-v1";
+      const DEFAULT_HABITS = ["Food", "DSA", "Sleep", "New Skill", "Exercise", "Gratitude"];
+      const STATUSES = {
+        done: "Done",
+        partial: "Partial",
+        skipped: "Skipped",
+        missed: "Missed",
+      };
+      
+      let state = loadState();
+      
+      const habitList = document.querySelector("#habitList");
+      const habitTemplate = document.querySelector("#habitTemplate");
+      const todoTemplate = document.querySelector("#todoTemplate");
+      const habitForm = document.querySelector("#habitForm");
+      const habitName = document.querySelector("#habitName");
+      const todoForm = document.querySelector("#todoForm");
+      const todoText = document.querySelector("#todoText");
+      const todoList = document.querySelector("#todoList");
+      const todoProgress = document.querySelector("#todoProgress");
+      const logDate = document.querySelector("#logDate");
+      const previousDay = document.querySelector("#previousDay");
+      const nextDay = document.querySelector("#nextDay");
+      const resetToday = document.querySelector("#resetToday");
+      const todayScore = document.querySelector("#todayScore");
+      const totalStreaks = document.querySelector("#totalStreaks");
+      const bestStreak = document.querySelector("#bestStreak");
+      const totalDone = document.querySelector("#totalDone");
+      const skipCount = document.querySelector("#skipCount");
+      const weeklyRate = document.querySelector("#weeklyRate");
+      const weekChart = document.querySelector("#weekChart");
+      const streakChart = document.querySelector("#streakChart");
+      const previousMonth = document.querySelector("#previousMonth");
+      const nextMonth = document.querySelector("#nextMonth");
+      const monthLabel = document.querySelector("#monthLabel");
+      const monthRate = document.querySelector("#monthRate");
+      const monthDone = document.querySelector("#monthDone");
+      const monthPerfectDays = document.querySelector("#monthPerfectDays");
+      const monthSkipped = document.querySelector("#monthSkipped");
+      const monthCalendar = document.querySelector("#monthCalendar");
+      const monthHabitBreakdown = document.querySelector("#monthHabitBreakdown");
+      const exportData = document.querySelector("#exportData");
+      const importData = document.querySelector("#importData");
+      
+      logDate.value = state.selectedDate;
+      render();
+      
+      habitForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = habitName.value.trim();
+        if (!name) return;
+      
+        state.habits.push({
+          id: createId(),
+          name,
+          createdAt: getToday(),
+        });
+        habitName.value = "";
+        saveAndRender();
+      });
+      
+      todoForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const text = todoText.value.trim();
+        if (!text) return;
+      
+        const todosForDay = getTodosForSelectedDay();
+        todosForDay.push({
+          id: createId(),
+          text,
+          done: false,
+        });
+        state.todos[state.selectedDate] = todosForDay;
+        todoText.value = "";
+        saveAndRender();
+      });
+      
+      logDate.addEventListener("change", () => {
+        if (!logDate.value) return;
+        state.selectedDate = logDate.value;
+        saveAndRender();
+      });
+      
+      previousDay.addEventListener("click", () => shiftDate(-1));
+      nextDay.addEventListener("click", () => shiftDate(1));
+      previousMonth.addEventListener("click", () => shiftMonth(-1));
+      nextMonth.addEventListener("click", () => shiftMonth(1));
+      
+      resetToday.addEventListener("click", () => {
+        delete state.logs[state.selectedDate];
+        delete state.todos[state.selectedDate];
+        saveAndRender();
+      });
+      
+      exportData.addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `habit-quest-backup-${getToday()}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+      
+      importData.addEventListener("change", async (event) => {
+        const [file] = event.target.files;
+        if (!file) return;
+      
+        try {
+          const imported = JSON.parse(await file.text());
+          state = normalizeState(imported);
+          saveAndRender();
+        } catch {
+          alert("That backup file could not be imported.");
+        } finally {
+          importData.value = "";
+        }
+      });
+      
+      function render() {
+        renderHabits();
+        renderTodos();
+        renderSummary();
+        renderWeekChart();
+        renderStreakChart();
+        renderMonthBoard();
+      }
+      
+      function renderHabits() {
+        habitList.innerHTML = "";
+        const logsForDay = getLogsForSelectedDay();
+      
+        state.habits.forEach((habit) => {
+          const node = habitTemplate.content.firstElementChild.cloneNode(true);
+          const titleInput = node.querySelector(".habit-title-input");
+          const streakPill = node.querySelector(".streak-pill");
+          const statusPill = node.querySelector(".status-pill");
+          const deleteButton = node.querySelector(".delete-habit");
+          const status = logsForDay[habit.id] || "";
+      
+          titleInput.value = habit.name;
+          streakPill.textContent = `${calculateCurrentStreak(habit.id)} day streak`;
+          statusPill.textContent = status ? STATUSES[status] : "Not logged";
+      
+          titleInput.addEventListener("change", () => {
+            const nextName = titleInput.value.trim();
+            if (!nextName) {
+              titleInput.value = habit.name;
+              return;
+            }
+            habit.name = nextName;
+            saveAndRender();
+          });
+      
+          node.querySelectorAll("[data-status]").forEach((button) => {
+            const buttonStatus = button.dataset.status;
+            button.classList.toggle("active", buttonStatus === status);
+            button.addEventListener("click", () => {
+              state.logs[state.selectedDate] = {
+                ...state.logs[state.selectedDate],
+                [habit.id]: buttonStatus,
+              };
+              saveAndRender();
+            });
+          });
+      
+          deleteButton.addEventListener("click", () => {
+            const confirmed = confirm(`Remove "${habit.name}" from your tracker?`);
+            if (!confirmed) return;
+            state.habits = state.habits.filter((item) => item.id !== habit.id);
+            Object.values(state.logs).forEach((dayLog) => delete dayLog[habit.id]);
+            saveAndRender();
+          });
+      
+          habitList.append(node);
+        });
+      }
+      
+      function renderTodos() {
+        todoList.innerHTML = "";
+        const todosForDay = getTodosForSelectedDay();
+        const doneCount = todosForDay.filter((todo) => todo.done).length;
+        todoProgress.textContent = `${doneCount}/${todosForDay.length} done`;
+      
+        if (!todosForDay.length) {
+          const empty = document.createElement("p");
+          empty.className = "empty-todo";
+          empty.textContent = "No tasks yet for this day.";
+          todoList.append(empty);
+          return;
+        }
+      
+        todosForDay.forEach((todo) => {
+          const node = todoTemplate.content.firstElementChild.cloneNode(true);
+          const checkbox = node.querySelector(".todo-checkbox");
+          const textInput = node.querySelector(".todo-text-input");
+          const deleteButton = node.querySelector(".delete-todo");
+      
+          node.classList.toggle("complete", todo.done);
+          checkbox.checked = todo.done;
+          textInput.value = todo.text;
+      
+          checkbox.addEventListener("change", () => {
+            todo.done = checkbox.checked;
+            saveAndRender();
+          });
+      
+          textInput.addEventListener("change", () => {
+            const nextText = textInput.value.trim();
+            if (!nextText) {
+              textInput.value = todo.text;
+              return;
+            }
+            todo.text = nextText;
+            saveAndRender();
+          });
+      
+          deleteButton.addEventListener("click", () => {
+            state.todos[state.selectedDate] = getTodosForSelectedDay().filter((item) => item.id !== todo.id);
+            saveAndRender();
+          });
+      
+          todoList.append(node);
+        });
+      }
+      
+      function renderSummary() {
+        const logsForDay = getLogsForSelectedDay();
+        const possibleToday = state.habits.length;
+        const todayDone = Object.values(logsForDay).filter((status) => status === "done").length;
+        const todayPartial = Object.values(logsForDay).filter((status) => status === "partial").length;
+        const todayPercent = possibleToday ? Math.round(((todayDone + todayPartial * 0.5) / possibleToday) * 100) : 0;
+        const streaks = state.habits.map((habit) => calculateCurrentStreak(habit.id));
+        const history = Object.values(state.logs).flatMap((dayLog) => Object.values(dayLog));
+      
+        todayScore.textContent = `${todayPercent}%`;
+        totalStreaks.textContent = streaks.reduce((sum, streak) => sum + streak, 0);
+        bestStreak.textContent = Math.max(0, ...state.habits.map((habit) => calculateBestStreak(habit.id)));
+        totalDone.textContent = history.filter((status) => status === "done").length;
+        skipCount.textContent = history.filter((status) => status === "skipped").length;
+      }
+      
+      function renderWeekChart() {
+        weekChart.innerHTML = "";
+        const dates = getDateRange(state.selectedDate, 6);
+        let totalPercent = 0;
+      
+        dates.forEach((date) => {
+          const dayLog = state.logs[date] || {};
+          const completion = calculateDayCompletion(dayLog);
+          totalPercent += completion;
+      
+          const bar = document.createElement("div");
+          bar.className = "day-bar";
+          bar.title = `${date}: ${completion}%`;
+          bar.innerHTML = `
+            <div class="day-bar-fill" style="height: ${Math.max(6, completion)}%"></div>
+            <span>${formatWeekday(date)}</span>
+          `;
+          weekChart.append(bar);
+        });
+      
+        weeklyRate.textContent = `${Math.round(totalPercent / dates.length)}%`;
+      }
+      
+      function renderStreakChart() {
+        streakChart.innerHTML = "";
+        const streaks = state.habits.map((habit) => ({
+          name: habit.name,
+          value: calculateCurrentStreak(habit.id),
+        }));
+        const maxStreak = Math.max(1, ...streaks.map((item) => item.value));
+      
+        streaks.forEach((habit) => {
+          const row = document.createElement("div");
+          row.className = "streak-row";
+          row.innerHTML = `
+            <span class="streak-name" title="${escapeHtml(habit.name)}">${escapeHtml(habit.name)}</span>
+            <div class="streak-track">
+              <div class="streak-fill" style="width: ${(habit.value / maxStreak) * 100}%"></div>
+            </div>
+            <span class="streak-value">${habit.value}</span>
+          `;
+          streakChart.append(row);
+        });
+      }
+      
+      function renderMonthBoard() {
+        const dates = getMonthDates(state.selectedDate);
+        const monthSummary = summarizeMonth(dates);
+      
+        monthLabel.textContent = new Intl.DateTimeFormat("en", {
+          month: "long",
+          year: "numeric",
+        }).format(new Date(`${state.selectedDate}T00:00:00`));
+        monthRate.textContent = `${monthSummary.completionRate}%`;
+        monthDone.textContent = monthSummary.doneCount;
+        monthPerfectDays.textContent = monthSummary.perfectDays;
+        monthSkipped.textContent = monthSummary.skippedCount;
+      
+        renderMonthCalendar(dates);
+        renderMonthHabitBreakdown(dates);
+      }
+      
+      function renderMonthCalendar(dates) {
+        monthCalendar.innerHTML = "";
+        const firstDate = new Date(`${dates[0]}T00:00:00`);
+        const leadingBlanks = firstDate.getDay();
+      
+        for (let index = 0; index < leadingBlanks; index += 1) {
+          const blank = document.createElement("span");
+          blank.className = "calendar-blank";
+          monthCalendar.append(blank);
+        }
+      
+        dates.forEach((date) => {
+          const completion = calculateDayCompletion(state.logs[date] || {});
+          const day = new Date(`${date}T00:00:00`).getDate();
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "calendar-day";
+          button.classList.toggle("selected", date === state.selectedDate);
+          button.dataset.score = getCalendarScore(completion);
+          button.title = `${date}: ${completion}% complete`;
+          button.innerHTML = `
+            <span>${day}</span>
+            <strong>${completion}%</strong>
+          `;
+          button.addEventListener("click", () => {
+            state.selectedDate = date;
+            logDate.value = date;
+            saveAndRender();
+          });
+          monthCalendar.append(button);
+        });
+      }
+      
+      function renderMonthHabitBreakdown(dates) {
+        monthHabitBreakdown.innerHTML = "";
+        const daysInMonth = dates.length;
+      
+        state.habits.forEach((habit) => {
+          const totals = dates.reduce(
+            (summary, date) => {
+              const status = state.logs[date]?.[habit.id];
+              if (status === "done") summary.done += 1;
+              if (status === "partial") summary.partial += 1;
+              if (status === "skipped") summary.skipped += 1;
+              if (status === "missed") summary.missed += 1;
+              return summary;
+            },
+            { done: 0, partial: 0, skipped: 0, missed: 0 },
+          );
+          const score = Math.round(((totals.done + totals.partial * 0.5) / daysInMonth) * 100);
+          const row = document.createElement("div");
+          row.className = "month-habit-row";
+          row.innerHTML = `
+            <div>
+              <strong title="${escapeHtml(habit.name)}">${escapeHtml(habit.name)}</strong>
+              <small>${totals.done} done, ${totals.partial} partial, ${totals.skipped} skipped, ${totals.missed} missed</small>
+            </div>
+            <div class="month-habit-meter" aria-hidden="true">
+              <span style="width: ${score}%"></span>
+            </div>
+            <b>${score}%</b>
+          `;
+          monthHabitBreakdown.append(row);
+        });
+      }
+      
+      function summarizeMonth(dates) {
+        let totalScore = 0;
+        let doneCount = 0;
+        let skippedCount = 0;
+        let perfectDays = 0;
+      
+        dates.forEach((date) => {
+          const dayLog = state.logs[date] || {};
+          const completion = calculateDayCompletion(dayLog);
+          totalScore += completion;
+          if (completion === 100 && state.habits.length) perfectDays += 1;
+          Object.values(dayLog).forEach((status) => {
+            if (status === "done") doneCount += 1;
+            if (status === "skipped") skippedCount += 1;
+          });
+        });
+      
+        return {
+          completionRate: dates.length ? Math.round(totalScore / dates.length) : 0,
+          doneCount,
+          skippedCount,
+          perfectDays,
+        };
+      }
+      
+      function getCalendarScore(completion) {
+        if (completion >= 100) return "perfect";
+        if (completion >= 67) return "strong";
+        if (completion >= 34) return "started";
+        if (completion > 0) return "low";
+        return "empty";
+      }
+      
+      function calculateDayCompletion(dayLog) {
+        if (!state.habits.length) return 0;
+        const values = state.habits.map((habit) => dayLog[habit.id]).filter(Boolean);
+        const score = values.reduce((sum, status) => {
+          if (status === "done") return sum + 1;
+          if (status === "partial") return sum + 0.5;
+          return sum;
+        }, 0);
+        return Math.round((score / state.habits.length) * 100);
+      }
+      
+      function calculateCurrentStreak(habitId) {
+        let streak = 0;
+        const dates = getDateRange(state.selectedDate, 365).reverse();
+      
+        for (const date of dates) {
+          const status = state.logs[date]?.[habitId];
+          if (status === "done" || status === "partial") {
+            streak += 1;
+            continue;
+          }
+          if (status === "skipped") continue;
+          if (!status && date === state.selectedDate) continue;
+          if (!status) break;
+          if (status === "missed") break;
+        }
+      
+        return streak;
+      }
+      
+      function calculateBestStreak(habitId) {
+        let best = 0;
+        let current = 0;
+        const dates = Object.keys(state.logs).sort();
+      
+        dates.forEach((date) => {
+          const status = state.logs[date]?.[habitId];
+          if (status === "done" || status === "partial") {
+            current += 1;
+            best = Math.max(best, current);
+            return;
+          }
+          if (status === "missed") current = 0;
+        });
+      
+        return best;
+      }
+      
+      function getLogsForSelectedDay() {
+        return state.logs[state.selectedDate] || {};
+      }
+      
+      function getTodosForSelectedDay() {
+        if (!Array.isArray(state.todos[state.selectedDate])) {
+          state.todos[state.selectedDate] = [];
+        }
+        return state.todos[state.selectedDate];
+      }
+      
+      function shiftDate(days) {
+        const date = new Date(`${state.selectedDate}T00:00:00`);
+        date.setDate(date.getDate() + days);
+        state.selectedDate = toDateInputValue(date);
+        logDate.value = state.selectedDate;
+        saveAndRender();
+      }
+      
+      function shiftMonth(months) {
+        const date = new Date(`${state.selectedDate}T00:00:00`);
+        const selectedDay = date.getDate();
+        date.setDate(1);
+        date.setMonth(date.getMonth() + months);
+        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+        date.setDate(Math.min(selectedDay, lastDay));
+        state.selectedDate = toDateInputValue(date);
+        logDate.value = state.selectedDate;
+        saveAndRender();
+      }
+      
+      function getDateRange(endDate, daysBack) {
+        const dates = [];
+        const date = new Date(`${endDate}T00:00:00`);
+        date.setDate(date.getDate() - daysBack);
+      
+        for (let index = 0; index <= daysBack; index += 1) {
+          dates.push(toDateInputValue(date));
+          date.setDate(date.getDate() + 1);
+        }
+      
+        return dates;
+      }
+      
+      function getMonthDates(dateValue) {
+        const date = new Date(`${dateValue}T00:00:00`);
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const dates = [];
+      
+        for (let day = 1; day <= daysInMonth; day += 1) {
+          dates.push(toDateInputValue(new Date(year, month, day)));
+        }
+      
+        return dates;
+      }
+      
+      function formatWeekday(dateValue) {
+        return new Intl.DateTimeFormat("en", { weekday: "short" }).format(new Date(`${dateValue}T00:00:00`));
+      }
+      
+      function loadState() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) return createDefaultState();
+      
+        try {
+          return normalizeState(JSON.parse(stored));
+        } catch {
+          return createDefaultState();
+        }
+      }
+      
+      function createDefaultState() {
+        return {
+          selectedDate: getToday(),
+          habits: DEFAULT_HABITS.map((name) => ({
+            id: createId(),
+            name,
+            createdAt: getToday(),
+          })),
+          logs: {
+            [getToday()]: {},
+          },
+          todos: {
+            [getToday()]: [],
+          },
+        };
+      }
+      
+      function normalizeState(candidate) {
+        const fallback = createDefaultState();
+        return {
+          selectedDate: typeof candidate?.selectedDate === "string" ? candidate.selectedDate : fallback.selectedDate,
+          habits: Array.isArray(candidate?.habits) && candidate.habits.length ? candidate.habits : fallback.habits,
+          logs: candidate?.logs && typeof candidate.logs === "object" ? candidate.logs : {},
+          todos: candidate?.todos && typeof candidate.todos === "object" ? candidate.todos : {},
+        };
+      }
+      
+      function saveAndRender() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        render();
+      }
+      
+      function getToday() {
+        return toDateInputValue(new Date());
+      }
+      
+      function createId() {
+        if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+        return `habit-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      }
+      
+      function toDateInputValue(date) {
+        const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return offsetDate.toISOString().slice(0, 10);
+      }
+      
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+    </script>
+  </body>
+</html>
